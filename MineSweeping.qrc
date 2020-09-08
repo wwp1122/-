@@ -1,0 +1,18 @@
+<RCC>
+    <qresource prefix="/MineSweeping">
+        <file alias="backGround">Resources/backGround.jpg</file>
+        <file alias="1">Resources/1.png</file>
+        <file alias="2">Resources/2.png</file>
+        <file alias="3">Resources/3.png</file>
+        <file alias="4">Resources/4.png</file>
+        <file alias="5">Resources/5.png</file>
+        <file alias="6">Resources/6.png</file>
+        <file alias="7">Resources/7.png</file>
+        <file alias="8">Resources/8.png</file>
+        <file alias="0">Resources/0.png</file>
+        <file alias="mine">Resources/mine.png</file>
+        <file alias="start">Resources/start.png</file>
+        <file alias="flag">Resources/flag.png</file>
+        <file alias="question">Resources/question.png</file>
+    </qresource>
+</RCC>
