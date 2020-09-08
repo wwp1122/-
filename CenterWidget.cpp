@@ -83,7 +83,7 @@ QRect CenterWidget::getRectFromPos(const int& x, const int& y)
 void CenterWidget::paintEvent(QPaintEvent* event)
 {
 	QPainter paint(this);
-	paint.drawPixmap(rect(), QPixmap(":/MineSweeping/backGround"), QRect());
+	paint.drawPixmap(QRect(2,0,xSize*invertalW,ySize*invertalH), QPixmap(":/MineSweeping/backGround"), QRect());
 
 	for (auto curCond : currentCondition)
 	{
@@ -158,6 +158,8 @@ void CenterWidget::getMousePressResult(const QVariant& value)
 				number = allMineLayout[i][j];
 				if (9 == number)
 					picturePath = QString(":/MineSweeping/mine");
+				else if (0 == number)
+					picturePath = QString(":/MineSweeping/null");
 				else
 					picturePath = QString(":/MineSweeping/%1").arg(number);
 				currentCondition[pair] = picturePath;
@@ -174,11 +176,10 @@ void CenterWidget::getMousePressResult(const QVariant& value)
 	else
 	{
 		//std::pair<int, int> pair = { xPos,yPos };
-		QString picPath = QString(":/MineSweeping/0");
 		for (auto pair : pressValue.result)
 		{
-			std::pair<int, int> realPair = { pair.first - 1,pair.second - 1 };
-			currentCondition[realPair] = picPath;
+			std::pair<int, int> realPair = { pair.first.first - 1,pair.first.second - 1 };
+			currentCondition[realPair] = pair.second;
 		}
 	}
 
@@ -317,10 +318,53 @@ void EventWorker::calculateArray()
 	return ;
 }
 
-void EventWorker::getAllNullPos(std::stack<std::pair<int,int> >& stack, std::set<std::pair<int, int> >&result)
+void EventWorker::getNullAndAroundPos(std::map<std::pair<int, int>, QString >& result)
+{
+
+	std::stack<std::pair<int, int> > stack;
+	std::pair<int, int> newPair;
+	newPair.first = xPosition;
+	newPair.second = yPosition;
+	stack.push(newPair);
+	getAllNullPos(stack, result);
+
+	int x;
+	int y;
+	std::set<std::pair<int, int> > mineRound;
+	for (auto nullPos : result)
+	{
+		x = nullPos.first.first;
+		y = nullPos.first.second;
+
+		int around[8][2] = { {x - 1,y - 1},{x - 1,y}, {x - 1,y + 1}, {x ,y - 1},
+{x ,y + 1}, {x + 1,y - 1}, {x + 1,y}, {x + 1,y + 1} };
+		for (int i = 0; i < 8; ++i)
+		{
+			if (0 == around[i][0] * around[i][1])
+				continue;
+			else if ((around[i][0] == xSize + 1) || (around[i][1] == ySize + 1))
+				continue;
+			else
+			{
+				std::pair<int, int> pair = { around[i][0] ,around[i][1] };
+				if (result.find(pair) == result.end())
+					mineRound.insert(pair);
+			}
+		}
+	}
+	int aroundMineCount;
+	QString picPath;
+	for (auto newPos : mineRound)
+	{
+		aroundMineCount = allPosMineCount[newPos.first][newPos.second];
+		picPath = QString(":/MineSweeping/%1").arg(aroundMineCount);
+		result[newPos] = picPath;
+	}
+}
+void EventWorker::getAllNullPos(std::stack<std::pair<int,int> >& stack, std::map<std::pair<int, int>, QString >& result)
 {
 	std::pair<int, int> topPair = stack.top();
-	result.insert(topPair);
+	result[topPair] = QString(":/MineSweeping/null");
 	int x = topPair.first;
 	int y = topPair.second;
 	int around[8][2] = { {x - 1,y - 1},{x - 1,y}, {x - 1,y + 1}, {x ,y - 1},
@@ -347,16 +391,10 @@ void EventWorker::calculateMousePressResult()
 
 	MousePressResultValue value;
 
-	std::set<std::pair<int, int> > result;
+	std::map<std::pair<int, int>, QString > result;
 	if (0 == allPosMineCount[xPosition][yPosition])
 	{
-		std::stack<std::pair<int, int> > stack;
-		std::pair<int, int> newPair;
-		newPair.first = xPosition;
-		newPair.second = yPosition;
-		stack.push(newPair);
-		getAllNullPos(stack, result);
-
+		getNullAndAroundPos(result);
 		value.pressType = CLICK_NULL;
 		value.result = result;
 

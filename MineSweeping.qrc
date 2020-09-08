@@ -1,6 +1,5 @@
 <RCC>
     <qresource prefix="/MineSweeping">
-        <file alias="backGround">Resources/backGround.jpg</file>
         <file alias="1">Resources/1.png</file>
         <file alias="2">Resources/2.png</file>
         <file alias="3">Resources/3.png</file>
@@ -14,5 +13,7 @@
         <file alias="start">Resources/start.png</file>
         <file alias="flag">Resources/flag.png</file>
         <file alias="question">Resources/question.png</file>
+        <file alias="backGround">Resources/background.jpg</file>
+        <file alias="null">Resources/null.png</file>
     </qresource>
 </RCC>

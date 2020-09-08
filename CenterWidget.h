@@ -22,7 +22,7 @@ enum MousePressResult
 struct MousePressResultValue
 {
 	int pressType;
-	std::set<std::pair<int, int> > result;
+	std::map<std::pair<int, int>,QString > result;
 	int aroundMineCount;
 };
 Q_DECLARE_METATYPE(MousePressResultValue);
@@ -82,7 +82,8 @@ public:
 private:
 	void getRandomInt(int &first, int&second, const int& xMax, const int& yMax);
 	void calculateArray();
-	void getAllNullPos(std::stack<std::pair<int, int> >& stack, std::set<std::pair<int, int> >&result);
+	void getNullAndAroundPos(std::map<std::pair<int, int>, QString >&result);
+	void getAllNullPos(std::stack<std::pair<int, int> >& stack, std::map<std::pair<int, int>, QString > &result);
 
 
 	int xSize;
